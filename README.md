@@ -4,3 +4,5 @@ java -jar file-transfer-1.0.0-release.jar
 
 首页默认是本机桌面
 http://ip:9090
+
+![img.png](img.png)
