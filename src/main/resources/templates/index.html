@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>文件传输</title>
+    <link rel="stylesheet" type="text/css" href="/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+
+</head>
+<body>
+<script src="/bootstrap-5.3.0-alpha1-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<h3>
+    <small class="text-muted" th:text="${fileTransfer.path}"></small>
+</h3>
+<div class="input-group mb-3" style="width: 600px">
+    <input type="text" class="form-control" id="folderPath" placeholder="请输入文件夹绝对路径"
+           aria-label="Recipient's username" aria-describedby="basic-addon2">
+    <button class="input-group-text" id="basic-addon2" onclick="to()">跳转</button>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">名称</th>
+        <th scope="col">类型</th>
+        <th scope="col">路径</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <span>上一层</span>
+        </td>
+        <td>
+            <span>文件夹</span>
+        </td>
+        <td>
+            <a th:href="'/next?path='+${fileTransfer.upperPath}">../</a>
+        </td>
+    </tr>
+    <tr th:each="v:${fileTransfer.subFiles}">
+        <td>
+            <span th:text="${v.name}"></span>
+        </td>
+        <td>
+            <span th:if="${v.type==T(com.daimao.filetransfer.enums.FileType).FOLDER}">文件夹</span>
+            <span th:if="${v.type==T(com.daimao.filetransfer.enums.FileType).FILE}">文件</span>
+        </td>
+        <!--        <td class="path" th:text="${v.path}" th:attr="onclick=|clickPath('${v}')|"></td>-->
+        <td class="path">
+            <a th:if="${v.type==T(com.daimao.filetransfer.enums.FileType).FOLDER}" th:text="${v.path}"
+               th:href="'/next?path='+${v.path}"></a>
+            <a th:if="${v.type==T(com.daimao.filetransfer.enums.FileType).FILE}" th:text="${v.path}"
+               th:href="'/download?path='+${v.path}"></a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    function to() {
+        const input = document.getElementById('folderPath');
+        const path = input.value;
+        if (path) {
+            window.location.href = "/next?path=" + encodeURIComponent(path);
+        } else {
+            alert("请输入有效文件夹路径！");
+        }
+    }
+</script>
+</body>
+
+</html>
+
