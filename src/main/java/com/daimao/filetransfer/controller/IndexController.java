@@ -3,12 +3,9 @@ package com.daimao.filetransfer.controller;
 import com.daimao.filetransfer.domain.FileTransfer;
 import com.daimao.filetransfer.service.TransferService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -52,12 +49,10 @@ public class IndexController {
             response.setContentType("application/force-download");
             response.setContentType("application/octet-stream");
             //设置文件名
-            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
-            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                    .name(URLEncoder.encode(fileName, StandardCharsets.UTF_8))
-                    .build();
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
+            // 对于现代浏览器，使用RFC 5987兼容的编码方式
+            String rfc5987FileName = "filename*=UTF-8''" + URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+            response.addHeader("Content-Disposition", "attachment;" + rfc5987FileName);
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
             byte[] buffer = new byte[4096];
             FileInputStream fileInputStream = null;
             BufferedInputStream bufferedInputStream = null;
